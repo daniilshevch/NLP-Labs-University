@@ -1,0 +1,35 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE settings
+.idea/
+.vscode/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
