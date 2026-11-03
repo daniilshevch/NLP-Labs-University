@@ -1,0 +1,2 @@
+{"event": "start_exam", "email": "ivan.petrenko@example.com", "name": "Іван Петренко", "topics": ["Токенізація: BPE, WordPiece, SentencePiece", "Механізм уваги та архітектура Transformer", "LLM-агенти та виклик інструментів"], "datetime": "2026-11-03T14:14:35"}
+{"event": "end_exam", "email": "ivan.petrenko@example.com", "score": 9.0, "datetime": "2026-11-03T14:20:28"}

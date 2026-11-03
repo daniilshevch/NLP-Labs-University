@@ -1,0 +1,162 @@
+[
+  {
+    "title": "Токенізація: BPE, WordPiece, SentencePiece",
+    "key_points": [
+      "навіщо потрібна підсловна токенізація (OOV, розмір словника)",
+      "як навчається BPE: злиття найчастіших пар символів",
+      "відмінність WordPiece (ймовірність/likelihood) і Unigram LM",
+      "SentencePiece працює з сирим текстом, пробіл як символ",
+      "вплив токенізації на мови з багатою морфологією (зокрема українську)"
+    ]
+  },
+  {
+    "title": "Векторні представлення слів: word2vec, GloVe, fastText",
+    "key_points": [
+      "дистрибутивна гіпотеза",
+      "CBOW vs Skip-gram, negative sampling",
+      "GloVe: факторизація матриці спільних входжень",
+      "fastText: символьні n-грами, робота з OOV",
+      "обмеження статичних ембедингів (полісемія) і контекстні ембединги"
+    ]
+  },
+  {
+    "title": "Мовні моделі на n-грамах і перплексія",
+    "key_points": [
+      "ланцюгове правило ймовірностей, марковське припущення",
+      "оцінка ймовірностей через частоти (MLE)",
+      "згладжування: Laplace, Kneser-Ney, backoff",
+      "перплексія: визначення і інтерпретація",
+      "обмеження n-грамних моделей (розрідженість, короткий контекст)"
+    ]
+  },
+  {
+    "title": "Рекурентні мережі: RNN, LSTM, GRU",
+    "key_points": [
+      "як RNN обробляє послідовність, приховений стан",
+      "проблема зникаючих/вибухових градієнтів",
+      "гейти LSTM (input, forget, output) і стан комірки",
+      "GRU як спрощення LSTM",
+      "seq2seq з енкодером і декодером, bottleneck фіксованого вектора"
+    ]
+  },
+  {
+    "title": "Механізм уваги та архітектура Transformer",
+    "key_points": [
+      "scaled dot-product attention: Q, K, V, softmax, ділення на sqrt(d_k)",
+      "multi-head attention і навіщо кілька голів",
+      "позиційне кодування (синусоїдальне, навчене, RoPE)",
+      "енкодер vs декодер, causal mask",
+      "residual connections, layer norm, FFN; квадратична складність по довжині"
+    ]
+  },
+  {
+    "title": "BERT і моделі-енкодери",
+    "key_points": [
+      "masked language modeling, next sentence prediction",
+      "двонаправлений контекст",
+      "токен [CLS] і використання для класифікації",
+      "fine-tuning на downstream задачах",
+      "варіанти: RoBERTa, DistilBERT, мультимовні моделі (XLM-R)"
+    ]
+  },
+  {
+    "title": "GPT і авторегресійні мовні моделі",
+    "key_points": [
+      "задача передбачення наступного токена",
+      "decoder-only архітектура з causal mask",
+      "scaling laws: роль розміру моделі, даних і обчислень",
+      "in-context learning, zero-shot і few-shot",
+      "відмінність pretraining від instruction tuning"
+    ]
+  },
+  {
+    "title": "Стратегії декодування тексту",
+    "key_points": [
+      "greedy decoding і його недоліки",
+      "beam search, де він доречний",
+      "temperature: як змінює розподіл",
+      "top-k і top-p (nucleus) sampling",
+      "repetition penalty, компроміс між різноманітністю і якістю"
+    ]
+  },
+  {
+    "title": "Fine-tuning і PEFT (LoRA, адаптери)",
+    "key_points": [
+      "повний fine-tuning vs parameter-efficient підходи",
+      "ідея LoRA: низькорангова декомпозиція оновлення ваг",
+      "QLoRA і квантизація",
+      "катастрофічне забування",
+      "коли краще fine-tuning, а коли промптинг або RAG"
+    ]
+  },
+  {
+    "title": "Instruction tuning і RLHF",
+    "key_points": [
+      "supervised fine-tuning на інструкціях",
+      "reward model на основі людських вподобань",
+      "PPO і роль KL-штрафу",
+      "DPO як альтернатива без явної reward model",
+      "проблеми: reward hacking, sycophancy"
+    ]
+  },
+  {
+    "title": "Retrieval-Augmented Generation (RAG)",
+    "key_points": [
+      "навіщо RAG: актуальність знань, менше галюцинацій, посилання на джерела",
+      "chunking документів",
+      "dense retrieval з ембедингами vs BM25, гібридний пошук",
+      "векторні бази даних, approximate nearest neighbour",
+      "reranking і оцінювання якості RAG"
+    ]
+  },
+  {
+    "title": "Промпт-інжиніринг",
+    "key_points": [
+      "zero-shot і few-shot промпти",
+      "chain-of-thought і самоузгодженість (self-consistency)",
+      "системний промпт, ролі, формат виводу (JSON)",
+      "prompt injection і як від нього захищатися",
+      "чутливість моделей до формулювання промпта"
+    ]
+  },
+  {
+    "title": "LLM-агенти та виклик інструментів",
+    "key_points": [
+      "що таке агент: LLM у циклі з інструментами",
+      "function calling: JSON-схема інструментів, повернення результату в контекст",
+      "ReAct: чергування міркувань і дій",
+      "пам'ять агента і обмеження контекстного вікна",
+      "ризики: зациклення, небезпечні дії, prompt injection через інструменти"
+    ]
+  },
+  {
+    "title": "Метрики оцінювання в NLP",
+    "key_points": [
+      "precision, recall, F1, macro vs micro усереднення",
+      "BLEU для перекладу, ROUGE для сумаризації",
+      "обмеження n-грамних метрик, BERTScore",
+      "LLM-as-a-judge і його упередження",
+      "бенчмарки (MMLU тощо) і проблема data contamination"
+    ]
+  },
+  {
+    "title": "Розпізнавання іменованих сутностей і розмітка послідовностей",
+    "key_points": [
+      "постановка задачі NER, типи сутностей",
+      "схеми розмітки BIO / BIOES",
+      "CRF поверх нейромережі",
+      "NER з трансформерами, вирівнювання підслів і міток",
+      "оцінка на рівні сутностей (entity-level F1)"
+    ]
+  },
+  {
+    "title": "Галюцинації LLM і способи їх зменшення",
+    "key_points": [
+      "що таке галюцинація, intrinsic vs extrinsic",
+      "причини: дані навчання, декодування, відсутність знань",
+      "методи зменшення: RAG, цитування джерел, self-verification",
+      "калібрування впевненості моделі",
+      "як виявляти та вимірювати галюцинації"
+    ]
+  }
+]
