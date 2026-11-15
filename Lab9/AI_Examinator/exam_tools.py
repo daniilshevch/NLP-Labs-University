@@ -92,6 +92,7 @@ class ExamSession:
     topic_results: dict[str, dict] = field(default_factory=dict)
     started_at: str | None = None
     finished: bool = False
+    result_path: Path | None = None
 
 
     def start_exam(self, email: str, name: str) -> list[str]:
@@ -176,7 +177,20 @@ class ExamSession:
             "datetime": finished_at,
         })
         print(f"[end_exam] {self.email}: {result['score']}/10 -> {path}")
+        self.result_path = path
         self.finished = True
+
+    def update_history(self, history: list[Message]) -> None:
+        """Перезаписує історію в уже збереженому результаті.
+
+        Модель іноді викликає end_exam раніше, ніж пише студенту підсумок,
+        тому після завершення ходу агент зберігає повну історію ще раз.
+        """
+        if self.result_path is None:
+            return
+        result = json.loads(self.result_path.read_text(encoding="utf-8"))
+        result["history"] = history
+        self.result_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
     def record_topic_result(self, topic: str, score: float, comment: str) -> str:

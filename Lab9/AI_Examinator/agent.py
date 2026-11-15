@@ -231,7 +231,7 @@ class ExaminerAgent:
                 self._log("system", response_message.content)
 
             if not tool_calls:
-                return response_message.content or "", events
+                return self._finish_turn(response_message.content or "", events)
 
             for single_tool_call in tool_calls:
                 try:
@@ -250,9 +250,15 @@ class ExaminerAgent:
                 )
 
             if self.session.finished and response_message.content:
-                return response_message.content, events
+                return self._finish_turn(response_message.content, events)
 
         return "Вибачте, сталася внутрішня помилка (забагато кроків). Спробуйте ще раз.", events
+
+    def _finish_turn(self, reply: str, events: list[ToolEvent]) -> tuple[str, list[ToolEvent]]:
+        """Завершує хід. Якщо іспит щойно завершено, зберігає повну історію, разом із підсумком."""
+        if self.session.finished:
+            self.session.update_history(list(self.log))
+        return reply, events
 
     def rollback_last_user_message(self) -> None:
         """Прибирає незавершений хід після помилки API, щоб повідомлення можна було надіслати знову."""
