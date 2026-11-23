@@ -1,2 +1,7 @@
 {"event": "start_exam", "email": "ivan.petrenko@example.com", "name": "Іван Петренко", "topics": ["Токенізація: BPE, WordPiece, SentencePiece", "Механізм уваги та архітектура Transformer", "LLM-агенти та виклик інструментів"], "datetime": "2026-11-03T14:14:35"}
 {"event": "end_exam", "email": "ivan.petrenko@example.com", "score": 9.0, "datetime": "2026-11-03T14:20:28"}
+{"event": "start_exam", "email": "daniil.shevchenko.shi.2023@lpnu.ua", "name": "Даниїл Шевченко", "topics": ["Метрики оцінювання в NLP", "Токенізація: BPE, WordPiece, SentencePiece", "Стратегії декодування тексту"], "datetime": "2026-11-18T21:34:35"}
+{"event": "end_exam", "email": "daniil.shevchenko.shi.2023@lpnu.ua", "score": 7.7, "datetime": "2026-11-18T21:37:00"}
+{"event": "start_exam", "email": "olena.kovalenko@lpnu.ua", "name": "Олена Коваленко", "topics": ["Механізм уваги та архітектура Transformer", "Метрики оцінювання в NLP", "Retrieval-Augmented Generation (RAG)"], "datetime": "2026-11-18T21:37:42"}
+{"event": "start_exam", "email": "maria.bondarenko@lpnu.ua", "name": "Марія Бондаренко", "topics": ["Промпт-інжиніринг", "Токенізація: BPE, WordPiece, SentencePiece", "Стратегії декодування тексту"], "datetime": "2026-11-18T21:48:10"}
+{"event": "end_exam", "email": "maria.bondarenko@lpnu.ua", "score": 6.0, "datetime": "2026-11-18T21:49:40"}

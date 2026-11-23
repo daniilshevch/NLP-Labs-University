@@ -4,10 +4,18 @@ from __future__ import annotations
 import json
 import os
 import gradio as gr
-
 from openai import OpenAI
 from agent import GREETING, ExaminerAgent
 from exam_tools import RESULTS_DIR
+from student_agent import generate_student_reply, load_personas, load_students
+
+
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
 
 PROVIDERS = {
     "OpenAI": {"base_url": "https://api.openai.com/v1", "model": "gpt-4.1-mini"},
@@ -21,6 +29,12 @@ PROVIDERS = {
 }
 DEFAULT_PROVIDER = "OpenAI"
 
+# Персони AI-студента і студенти, від імені яких він складає іспит.
+PERSONAS = {p["label"]: p for p in load_personas()}
+DEFAULT_PERSONA = "Добре"
+STUDENTS = {f"{s['name']} ({s['email']})": s for s in load_students()}
+DEFAULT_STUDENT = next((k for k, s in STUDENTS.items() if s["name"] == "Test Student"), next(iter(STUDENTS)))
+
 DESCRIPTION = """
 # 🎓 AI Examiner — іспит з NLP
 
@@ -30,6 +44,9 @@ LLM-агент, який проводить усний іспит з курсу 
 
 **Як почати:** вкажіть API-ключ у налаштуваннях нижче і напишіть в чат ім'я, прізвище та email.
 Для демо можна використати студента **Test Student**, `test@lpnu.ua`.
+
+**AI-студент:** на будь-якому кроці замість ручної відповіді можна натиснути «Згенерувати відповідь».
+Модель-студент напише відповідь відповідно до обраного рівня знань, і перед відправкою її можна відредагувати.
 """
 
 
@@ -94,6 +111,32 @@ def bot_turn(pending: str, chat, agent, api_key, base_url, model, show_tools):
     return chat, agent, ""
 
 
+def generate_answer(agent, api_key, base_url, model, student_model, persona_label, student_label):
+    """Генерує відповідь AI-студента і кладе її в поле вводу."""
+    if agent is not None and agent.session.finished:
+        raise gr.Error("Іспит уже завершено. Щоб почати новий, натисніть «Новий іспит».")
+    api_key = (api_key or "").strip() or os.getenv("LLM_API_KEY", "")
+    if not api_key:
+        raise gr.Error("Вкажіть API-ключ у налаштуваннях LLM.")
+
+    # Студент бачить те саме, що бачила б людина: журнал іспиту без викликів інструментів.
+    transcript = agent.log if agent is not None else [{"role": "system", "content": GREETING, "datetime": ""}]
+    client = OpenAI(api_key=api_key, base_url=(base_url or "").strip() or None)
+    try:
+        text = generate_student_reply(
+            client=client,
+            model=(student_model or "").strip() or model.strip(),
+            persona_prompt=PERSONAS[persona_label]["prompt"],
+            student=STUDENTS[student_label],
+            transcript=transcript,
+        )
+    except Exception as e:  # помилки мережі/API
+        raise gr.Error(f"Не вдалося згенерувати відповідь: {type(e).__name__}: {e}")
+    if not text:
+        raise gr.Error("Модель повернула порожню відповідь. Спробуйте ще раз.")
+    return text
+
+
 def new_exam():
     return initial_chat(), None, ""
 
@@ -131,11 +174,24 @@ with gr.Blocks(title="AI Examiner") as demo:
                 base_url = gr.Textbox(value=PROVIDERS[DEFAULT_PROVIDER]["base_url"], label="Base URL")
             show_tools = gr.Checkbox(value=True, label="Показувати виклики інструментів у чаті")
 
+        with gr.Accordion("🤖 AI-студент", open=False):
+            gr.Markdown(
+                "Модель-студент використовує того самого провайдера і ключ, що й екзаменатор. "
+                "Модель краще взяти іншу: модель схильна завищувати оцінку відповідям у власному стилі."
+            )
+            with gr.Row():
+                persona = gr.Dropdown(list(PERSONAS), value=DEFAULT_PERSONA, label="Рівень відповідей")
+                student = gr.Dropdown(list(STUDENTS), value=DEFAULT_STUDENT, label="Від імені студента")
+                student_model = gr.Textbox(label="Модель студента", placeholder="порожньо = як в екзаменатора")
+
         chatbot = gr.Chatbot(value=initial_chat(), height=520, label="Екзаменатор")
         with gr.Row():
             msg = gr.Textbox(placeholder="Ваша відповідь…", show_label=False, scale=8, autofocus=True)
             send = gr.Button("Надіслати", variant="primary", scale=1)
-        reset = gr.Button("🔄 Новий іспит")
+        with gr.Row():
+            generate = gr.Button("🤖 Згенерувати відповідь")
+            generate_send = gr.Button("🤖 Згенерувати й надіслати")
+            reset = gr.Button("🔄 Новий іспит")
 
     with gr.Tab("Результати"):
         gr.Markdown("Збережені результати іспитів (файли в `results/`).")
@@ -154,8 +210,16 @@ with gr.Blocks(title="AI Examiner") as demo:
         trigger(add_user_message, [msg, chatbot], [msg, chatbot, pending_state]).then(
             bot_turn, turn_inputs, turn_outputs
         )
+    # AI-студент: «Згенерувати» лише заповнює поле вводу, «Згенерувати й надіслати»
+    # після цього запускає звичайний хід. .success() не запускає хід, якщо генерація впала.
+    gen_inputs = [agent_state, api_key, base_url, model, student_model, persona, student]
+    generate.click(generate_answer, gen_inputs, msg)
+    generate_send.click(generate_answer, gen_inputs, msg).success(
+        add_user_message, [msg, chatbot], [msg, chatbot, pending_state]
+    ).then(bot_turn, turn_inputs, turn_outputs)
+
     reset.click(new_exam, outputs=[chatbot, agent_state, pending_state])
 
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(ssr_mode=False)
