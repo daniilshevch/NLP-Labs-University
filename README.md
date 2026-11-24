@@ -2,7 +2,21 @@
 
 Навчальний репозиторій з лабораторними роботами з курсу **«Основи великих мовних моделей»** у **Національному університеті «Львівська політехніка»**.
 
-У репозиторії зібрані практичні роботи з обробки природної мови, векторних представлень слів, класифікації текстів і генерації тексту за допомогою мовних моделей.
+Дев'ять практичних робіт складаються в повний шлях NLP: від ручної токенізації та Bag-of-Words через n-грамні й нейромережеві мовні моделі, RNN і GPT-2 до fine-tuning трансформерів і застосунків на LLM. Більшість алгоритмів спершу реалізовано вручну на NumPy або PyTorch, а потім порівняно з готовими бібліотеками.
+
+## Огляд
+
+| # | Робота | Ключові технології | Результат |
+|:-:|---|---|---|
+| 1 | [Класифікація текстів](Lab1/README.md) | spaCy, BoW, TF-IDF, scikit-learn | Accuracy **0.888** на IMDB |
+| 2 | [Word Embeddings](Lab2/README.md) | GloVe, Gensim, NumPy | `paris − france + ukraine` → `kiev` |
+| 3 | [Класифікація за допомогою embeddings](Lab3/README.md) | GloVe, Bag-of-Embeddings, PyTorch | 0.773 проти 0.504 у TF-IDF на 1 000 прикладів |
+| 4 | [Виправлення помилок у тексті](Lab4/README.md) | n-грами, Bengio Char-FFNN, PyTorch | Accuracy **0.85**, perplexity **6.20** |
+| 5 | [Генерація тексту](Lab5/README.md) | GPT-2, Transformers | 5 стратегій декодування з нуля |
+| 6 | [Декодування повідомлення RNN](Lab6/README.md) | Elman RNN, NumPy, PyTorch | Повідомлення відновлено з ваг мережі |
+| 7 | [Fine-tuning BERT](Lab7/README.md) | ModernBERT, HF Trainer | Accuracy **0.963**, F1 **0.962** |
+| 8 | [Генерація SQL із природної мови](Lab8/README.md) | OpenAI API, Gradio | Вебсервіс text-to-SQL для 4 діалектів |
+| 9 | [AI Examiner: LLM-агент](Lab9/AI_Examinator/README.md) | Function calling, Gradio | Агент-екзаменатор + AI-студент для тестування |
 
 ## Лабораторні роботи
 
@@ -146,19 +160,66 @@
 
 [Переглянути лабораторну роботу 7](Lab7/README.md)
 
+### Лабораторна робота 8 — Генерація SQL із природної мови
+
+Вебсервіс на Gradio, який перетворює текстовий запит українською на SQL-запит під задану схему бази даних і діалект СУБД за допомогою `gpt-4o-mini`.
+
+Основні теми:
+
+- text-to-SQL з урахуванням DDL-схеми;
+- prompt engineering: системний промпт зі схемою, діалектом і жорсткими правилами формату виводу;
+- детермінована генерація з `temperature = 0`;
+- пост-обробка відповіді LLM (видалення markdown-огорож);
+- підтримка PostgreSQL, T-SQL, MySQL і SQLite;
+- демонстраційні схеми: магазин, бібліотека, університет, HR;
+- складні випадки: `JOIN`, агрегація, віконні функції, рекурсивні CTE;
+- обробка помилок API та робота з ключем через `.env`.
+
+[Переглянути лабораторну роботу 8](Lab8/README.md)
+
+### Лабораторна робота 9 — AI Examiner: LLM-агент для проведення іспиту
+
+LLM-агент, який проводить усний іспит з NLP у чаті: ідентифікує студента, ставить питання по випадкових темах, оцінює відповіді та зберігає результат. Агентний цикл написано без фреймворків, на чистому function calling. Для тестування є AI-студент.
+
+Основні теми:
+
+- агентний цикл function calling без LangChain і подібних фреймворків;
+- інструменти `start_exam`, `get_next_topic`, `record_topic_result`, `end_exam`;
+- валідація аргументів і порядку викликів на боці коду;
+- захист від prompt injection та маніпуляцій оцінкою;
+- AI-студент із 7 персонами для автоматичного тестування екзаменатора;
+- підтримка будь-якого OpenAI-сумісного провайдера (OpenAI, Gemini, Groq, OpenRouter, локальні моделі);
+- чат-інтерфейс на Gradio з вкладкою результатів;
+- збереження результатів і журналу подій у JSON / JSONL.
+
+[Переглянути лабораторну роботу 9](Lab9/AI_Examinator/README.md)
+
 ## Технології
 
-- Python
-- NumPy
-- spaCy
-- PyTorch
-- scikit-learn
-- Gensim
-- Hugging Face Datasets
-- Hugging Face Transformers
-- GPT-2
-- GloVe
-- lpnlp
+| Напрям | Інструменти |
+|---|---|
+| Мова та обчислення | Python, NumPy, pandas, Matplotlib |
+| Класичний NLP і ML | spaCy, PyStemmer, scikit-learn, Gensim |
+| Глибоке навчання | PyTorch |
+| Трансформери | Hugging Face Transformers, Datasets, Accelerate |
+| Моделі | GloVe, GPT-2, ModernBERT, `gpt-4o-mini`, Gemini / Llama через OpenAI-сумісні API |
+| LLM-застосунки | OpenAI Python SDK, function calling, Gradio |
+| Середовище | Jupyter Notebook, Google Colab, `lpnlp` (сервіс перевірки лабораторних) |
+
+## Структура репозиторію
+
+```text
+LabsCoding/
+├── Lab1/ … Lab7/      # Jupyter Notebook + README з результатами
+├── Lab8/              # Gradio-застосунок NL → SQL
+└── Lab9/
+    └── AI_Examinator/ # LLM-агент-екзаменатор
+```
+
+## Запуск
+
+- **Лабораторні 1–7** зроблені як Jupyter Notebook. Їх найпростіше відкрити в Google Colab або локально в Jupyter і виконати комірки послідовно. Залежності встановлюються в перших комірках.
+- **Лабораторні 8–9** є вебзастосунками на Gradio: `pip install -r requirements.txt`, потім `python app.py`. Для них потрібен API-ключ, деталі в README кожної роботи.
 
 ## Автор
 
