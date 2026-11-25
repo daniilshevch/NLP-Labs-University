@@ -6,11 +6,8 @@
 """
 
 from __future__ import annotations
-
 import json
-
 from openai import OpenAI
-
 from exam_tools import DATA_DIR, Message
 
 STUDENT_PROMPT = """\

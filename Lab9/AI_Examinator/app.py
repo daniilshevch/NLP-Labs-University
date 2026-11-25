@@ -90,7 +90,7 @@ def bot_turn(pending: str, chat, agent, api_key, base_url, model, show_tools):
 
     try:
         reply, events = agent.respond(pending)
-    except Exception as e:  # помилки мережі/API показуємо в чаті
+    except Exception as e:
         agent.rollback_last_user_message()
         return chat + [
             {"role": "assistant", "content": f"⚠️ Помилка LLM API: `{type(e).__name__}: {e}`"}
