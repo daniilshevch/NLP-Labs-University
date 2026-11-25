@@ -1,5 +1,4 @@
 """Агент-екзаменатор: LLM у циклі з інструментами (function calling).
-
 Працює з будь-яким OpenAI-сумісним API (OpenAI, Gemini, Groq, OpenRouter, ...).
 Жодного агентного фреймворку: увесь цикл нижче, у методі ExaminerAgent.respond.
 """
